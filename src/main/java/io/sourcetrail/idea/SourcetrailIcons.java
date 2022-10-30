@@ -11,5 +11,5 @@ public class SourcetrailIcons {
     }
 
     public static final Icon Sourcetrail = load("/sourcetrail.png"); // 16x16
-    Icon SOURCETRAIL = IconLoader.getIcon("/sourcetrail.png");
+//    Icon SOURCETRAIL = IconLoader.getIcon("/sourcetrail.png");
 }

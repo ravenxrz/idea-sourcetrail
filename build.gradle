@@ -1,18 +1,28 @@
-plugins { 
-  id "org.jetbrains.intellij" version "0.4.8" 
-}
-
-intellij {
-    version 145.0 //IntelliJ IDEA dependency
-    pluginName 'idea-sourcetrail'
-
-	updateSinceUntilBuild false
-}
-
-publishPlugin {
-	username publishUsername
-	password publishPassword
+plugins {
+    id "org.jetbrains.intellij" version "1.5.2"
 }
 
 group 'io.sourcetrail'
-version '0.4.9'
+version '0.5.0'
+
+repositories {
+    mavenCentral()
+}
+
+intellij {
+    version = "2022.1.4" //IntelliJ IDEA dependency
+    pluginName ='idea-sourcetrail'
+    type = "IC"
+
+    updateSinceUntilBuild = false
+
+}
+
+//publishPlugin {
+//    username ""
+//    password ""
+//}
+
+//dependencies {
+//    implementation('org.jetbrains:annotations:16.0.2')
+//}

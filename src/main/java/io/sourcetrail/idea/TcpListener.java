@@ -7,6 +7,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.ScrollType;
+import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl;
@@ -25,6 +26,8 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class TcpListener extends Thread implements ApplicationComponent {
 
@@ -43,6 +46,22 @@ public class TcpListener extends Thread implements ApplicationComponent {
 
     public void disposeComponent() {
         interrupt();
+    }
+
+    private int getTabNumberOfline(String filePath, int lineNumber) {
+        int tabNum = 0;
+        try {
+            String line = Files.readAllLines(Paths.get(filePath)).get(lineNumber);
+            char []cs = line.toCharArray();
+            for(int i = 0; i < cs.length; i++)  {
+                if (cs[i] == '\t') {
+                   tabNum++;
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return tabNum;
     }
 
     public void run() {
@@ -80,7 +99,10 @@ public class TcpListener extends Thread implements ApplicationComponent {
                                         descriptor.navigateInEditor(project, true);
                                         Editor editor =
                                                 ((PsiAwareTextEditorImpl)FileEditorManager.getInstance(project).getSelectedEditor(vf)).getEditor();
-                                        LogicalPosition position = new LogicalPosition(moveCursorMessage.row, moveCursorMessage.col);
+
+                                        int tablSpaces = editor.getSettings().getTabSize(project);
+                                        int tabNum = getTabNumberOfline(f.getAbsolutePath(), moveCursorMessage.row);
+                                        LogicalPosition position = new LogicalPosition(moveCursorMessage.row, moveCursorMessage.col + tabNum * tablSpaces);
                                         editor.getCaretModel().moveToLogicalPosition(position);
                                         editor.getScrollingModel().scrollToCaret(ScrollType.CENTER);
                                         IdeFocusManagerImpl.findInstance().requestDefaultFocus(true);
